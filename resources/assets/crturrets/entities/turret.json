@@ -1,0 +1,85 @@
+{
+  "code": "turret",
+  "class": "CR_EntityTurret",
+  "eyeHeight": 1.8,
+  "knockbackResistance": 1,
+  "collisionBoxSize": { "x": 0.5, "y": 1 },
+  "selectionBoxSize": { "x": 0.5, "y": 1 },
+  "attributes": {
+    "spawnDamageParticles": true,
+    "turretProperties": {
+      "turretItem": "crturrets:turret"
+    }
+  },
+  "client": {
+    "textures": {
+      "color-white": { "base": "game:block/liquid/dye/white" },
+      "color-black": { "base": "game:block/liquid/dye/black" },
+      "color-gray": { "base": "game:block/liquid/dye/gray" },
+      "color-red": { "base": "game:block/liquid/dye/red" },
+      "color-green": { "base": "game:block/liquid/dye/green" },
+      "status": { "base": "game:block/liquid/dye/red" },
+      "iron": { "base": "game:block/metal/ingot/iron" },
+      "copper": { "base": "game:block/metal/ingot/copper" }
+    },
+    // "renderer": "CRShapeEntityTurretRenderer",
+    "renderer": "Shape",
+    "shape": { "base": "entity/land/turret" },
+    "behaviors": [{ "code": "repulseagents" }, { "code": "controlledphysics", "stepHeight": 1.1251 }, { "code": "interpolateposition" }],
+    "animations": [
+      {
+        "code": "hurt",
+        "animation": "bounce",
+        "animationSpeed": 3
+      },
+      {
+        "code": "die",
+        "animation": "death",
+        "animationSpeed": 1.25,
+        "weight": 10,
+        "blendMode": "Average"
+      },
+      {
+        "code": "idle",
+        "animation": "idle",
+        "blendMode": "Average",
+        "triggeredBy": { "defaultAnim": true }
+      }
+    ]
+  },
+  "server": {
+    "attributes": {
+      "pathfinder": {
+        "minTurnAnglePerSec": 360,
+        "maxTurnAnglePerSec": 360
+      }
+    },
+    "behaviors": [
+      { "code": "repulseagents" },
+      { "code": "controlledphysics", "stepHeight": 1.1251 },
+      { "code": "health" },
+      {
+        "code": "taskai",
+        "aitasks": [
+          {
+            "code": "cr_turret",
+            "entityCodes": ["*"],
+            "priority": 1.5,
+            "priorityForCancel": 9,
+            "mincooldown": 10,
+            "maxcooldown": 100,
+            "durationMs": 300,
+            "releaseAtMs": 125,
+            "maxDist": 17,
+            "seekingRange": 30,
+            "animationSpeed": 1.5,
+            "animation": "bounce"
+          }
+        ]
+      }
+    ]
+  },
+  "sounds": {
+    "hurt": "game:creature/locust/hurt"
+  }
+}

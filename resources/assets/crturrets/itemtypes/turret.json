@@ -1,0 +1,51 @@
+{
+  "code": "turret",
+  "class": "CR_ItemTurret",
+  "attributes": {
+    "turretProperties": {
+      "maxHealth": 14,
+      "pickupSound": "game:sounds/block/torch",
+      "turretEntity": "crturrets:turret"
+    }
+  },
+  "canClimb": true,
+  "canClimbAnywhere": true,
+  "climbTouchDistance": 0.1,
+  "rotateModelOnClimb": true,
+  "shape": {
+    "base": "entity/land/turret"
+  },
+  "textures": {
+    "color-white": { "base": "game:block/liquid/dye/white" },
+    "color-black": { "base": "game:block/liquid/dye/black" },
+    "status": { "base": "game:block/liquid/dye/red" },
+    "iron": { "base": "game:block/metal/ingot/iron" },
+    "copper": { "base": "game:block/metal/ingot/copper" }
+  },
+  "creativeinventory": { "general": ["*"], "items": ["*"] },
+  "heldTpIdleAnimation": "holdunderarm",
+  "maxstacksize": 1,
+  "guiTransform": {
+    "rotate": true,
+    "translation": { "x": 3, "y": 0, "z": 0 },
+    "rotation": { "x": -35, "y": -35, "z": 180 },
+    "origin": { "x": 0.5, "y": 0.5, "z": 0.5 },
+    "scale": 1.6
+  },
+  "fpHandTransform": {
+    "translation": { "x": 0, "y": 0, "z": 0.15 },
+    "rotation": { "x": 180, "y": 180, "z": -167 },
+    "scale": 1.22
+  },
+  "tpHandTransform": {
+    "translation": { "x": -0.8, "y": -0.4, "z": -0.6 },
+    "rotation": { "x": 1, "y": -3, "z": -84 },
+    "scale": 0.63
+  },
+  "groundTransform": {
+    "translation": { "x": 0, "y": 0, "z": 0 },
+    "rotation": { "x": 0, "y": 0, "z": 0 },
+    "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+    "scale": 3.5
+  }
+}
