@@ -4,10 +4,10 @@ using Vintagestory.API.Datastructures;
 
 namespace CRTurrets
 {
-  public class EntityBehaviorRealAggressor : EntityBehavior
+  public class EntityBehaviorAggressor : EntityBehavior
   {
-    public EntityBehaviorRealAggressor(Entity entity) : base(entity) { }
-    public override string PropertyName() => "cr_realaggressor";
+    public EntityBehaviorAggressor(Entity entity) : base(entity) { }
+    public override string PropertyName() => "cr_aggressor";
 
     // public override void OnEntityDeath(DamageSource damageSourceForDeath)
     // {

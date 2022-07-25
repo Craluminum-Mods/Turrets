@@ -16,7 +16,7 @@ namespace CRTurrets
       api.World.Logger.Event("started 'Turrets' mod");
       api.RegisterEntity("CR_EntityTurret", typeof(EntityTurret));
       api.RegisterItemClass("CR_ItemTurret", typeof(ItemTurret));
-      api.RegisterEntityBehaviorClass("cr_realaggressor", typeof(EntityBehaviorRealAggressor));
+      api.RegisterEntityBehaviorClass("cr_aggressor", typeof(EntityBehaviorAggressor));
       AiTaskRegistry.Register("cr_turret", typeof(AiTaskTurret));
     }
 

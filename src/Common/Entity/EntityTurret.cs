@@ -50,7 +50,7 @@ namespace CRTurrets
     //   {
     //     victim.WatchedAttributes.SetLong("tmpAggressorId", aggressor.EntityId);
     //     aggressor.WatchedAttributes.SetLong("tmpVictimId", victim.EntityId);
-    //     aggressor.AddBehavior(new EntityBehaviorRealAggressor(aggressor));
+    //     aggressor.AddBehavior(new EntityBehaviorAggressor(aggressor));
     //   }
     //   else
     //   {
