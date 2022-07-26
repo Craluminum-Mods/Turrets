@@ -41,27 +41,32 @@ namespace CRTurrets
       var type = byEntity.World.GetEntityType(new AssetLocation(turretEntity));
       var entity = byEntity.World.ClassRegistry.CreateEntity(type);
 
-      if (entity != null)
+      if (entity == null) return;
+
+      entity.ServerPos.X = blockSel.Position.X + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.X) + 0.5f;
+      entity.ServerPos.Y = blockSel.Position.Y + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.Y);
+      entity.ServerPos.Z = blockSel.Position.Z + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.Z) + 0.5f;
+      entity.ServerPos.Yaw = byEntity.SidedPos.Yaw + GameMath.PI;
+
+      if ((player?.PlayerUID) != null)
       {
-        entity.ServerPos.X = blockSel.Position.X + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.X) + 0.5f;
-        entity.ServerPos.Y = blockSel.Position.Y + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.Y);
-        entity.ServerPos.Z = blockSel.Position.Z + (blockSel.DidOffset ? 0 : blockSel.Face.Normali.Z) + 0.5f;
-        entity.ServerPos.Yaw = byEntity.SidedPos.Yaw + GameMath.PI;
-
-        if (player?.PlayerUID != null)
-        {
-          entity.WatchedAttributes.SetString("ownerUid", player.PlayerUID);
-          entity.WatchedAttributes.SetFloat("tmpHealth", GetHealth(slot));
-          entity.WatchedAttributes.SetFloat("tmpMaxHealth", maxHealth);
-        }
-
-        entity.Pos.SetFrom(entity.ServerPos);
-
-        byEntity.World.PlaySoundAt(new AssetLocation(pickupSound), entity, player);
-
-        byEntity.World.SpawnEntity(entity);
-        handling = EnumHandHandling.PreventDefaultAction;
+        entity.WatchedAttributes.SetString("ownerUid", player.PlayerUID);
       }
+
+      entity.WatchedAttributes.SetFloat("tmpHealth", GetHealth(slot));
+      entity.WatchedAttributes.SetFloat("tmpMaxHealth", maxHealth);
+
+      if (!player.Entity.Controls.ShiftKey && player.Entity.Controls.CtrlKey)
+      {
+        entity.WatchedAttributes.SetBool("crturret-status", true);
+      }
+
+      entity.Pos.SetFrom(entity.ServerPos);
+
+      byEntity.World.PlaySoundAt(new AssetLocation(pickupSound), entity, player);
+
+      byEntity.World.SpawnEntity(entity);
+      handling = EnumHandHandling.PreventDefaultAction;
     }
 
     public float GetHealth(ItemSlot slot)
@@ -81,6 +86,12 @@ namespace CRTurrets
         {
           ActionLangCode = "heldhelp-place",
           MouseButton = EnumMouseButton.Right
+        },
+        new WorldInteraction
+        {
+          ActionLangCode = Code.Domain + ":heldhelp-place-enabled",
+          MouseButton = EnumMouseButton.Right,
+          HotKeyCode = "ctrl"
         }
       }.Append(base.GetHeldInteractionHelp(inSlot));
     }

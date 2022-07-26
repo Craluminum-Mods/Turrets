@@ -3,5 +3,6 @@
   "item-turret": "Turret",
   "game:prefixandcreature-turret": "a turret",
   "entityhelp-addammo-arrow": "Add arrow",
-  "entityhelp-addammo-stone": "Add stone"
+  "entityhelp-addammo-stone": "Add stone",
+  "heldhelp-place-enabled": "Place as enabled"
 }

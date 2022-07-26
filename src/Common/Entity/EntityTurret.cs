@@ -38,7 +38,6 @@ namespace CRTurrets
     {
       base.OnEntitySpawn();
 
-      WatchedAttributes.SetBool("crturret-status", false);
       WatchedAttributes.GetTreeAttribute("health").SetFloat("basemaxhealth", WatchedAttributes.GetFloat("tmpMaxHealth"));
       WatchedAttributes.GetTreeAttribute("health").SetFloat("maxhealth", WatchedAttributes.GetFloat("tmpMaxHealth"));
       WatchedAttributes.GetTreeAttribute("health").SetFloat("currenthealth", WatchedAttributes.GetFloat("tmpHealth"));
