@@ -16,49 +16,13 @@ namespace CRTurrets
 
     // string[] blacklistEntityIds;
     // string[] blacklistPlayerIds;
-    // string successKillSound;
 
     public override void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)
     {
       base.Initialize(properties, api, InChunkIndex3d);
 
       turretItem = Properties.Attributes["turretProperties"]["turretItem"].AsString();
-      // successKillSound = Properties.Attributes["turretProperties"]["successKillSound"].AsString();
     }
-
-    // public override void OnGameTick(float dt)
-    // {
-    //   base.OnGameTick(dt);
-
-    //   var aggressorDead = WatchedAttributes.GetLong("tmpDeadAggressorId");
-
-    //   if (aggressorDead != 0)
-    //   {
-    //     // (Api as ICoreServerAPI)?.BroadcastMessageToAllGroups(aggressorDead + " is dead now", EnumChatType.Notification);
-    //     Api.World.PlaySoundAt(new AssetLocation(successKillSound), this);
-    //     WatchedAttributes.RemoveAttribute("tmpAggressorId");
-    //     WatchedAttributes.RemoveAttribute("tmpDeadAggressorId");
-    //   }
-    // }
-
-    // public override bool ReceiveDamage(DamageSource damageSource, float damage)
-    // {
-    //   var victim = this;
-    //   var aggressor = World.GetEntityById(damageSource.SourceEntity.EntityId);
-
-    //   if (aggressor.EntityId != 0 && victim.EntityId != 0)
-    //   {
-    //     victim.WatchedAttributes.SetLong("tmpAggressorId", aggressor.EntityId);
-    //     aggressor.WatchedAttributes.SetLong("tmpVictimId", victim.EntityId);
-    //     aggressor.AddBehavior(new EntityBehaviorAggressor(aggressor));
-    //   }
-    //   else
-    //   {
-    //     return base.ReceiveDamage(damageSource, damage);
-    //   }
-
-    //   return base.ReceiveDamage(damageSource, damage);
-    // }
 
     public override bool ShouldReceiveDamage(DamageSource damageSource, float damage)
     {
@@ -150,13 +114,6 @@ namespace CRTurrets
       .AppendLine("</font>");
       sb.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth.ToString() ?? "-", maxHealth.ToString() ?? "-"));
       sb.AppendLine(Lang.Get("Owner: {0}", playerName ?? "-"));
-
-      // var tmpAggressorId = WatchedAttributes.GetLong("tmpAggressorId");
-      // var tmpDeadAggressorId = WatchedAttributes.GetLong("tmpDeadAggressorId");
-
-      // sb.AppendLine("Debug info:");
-      // sb.AppendLine(Lang.Get("Aggressor: {0}", tmpAggressorId.ToString() ?? "-"));
-      // sb.AppendLine(Lang.Get("Dead Aggressor ID: {0}", tmpDeadAggressorId.ToString() ?? "-"));
 
       return sb.ToString();
     }

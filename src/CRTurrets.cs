@@ -17,6 +17,7 @@ namespace CRTurrets
       api.RegisterEntity("CR_EntityTurret", typeof(EntityTurret));
       api.RegisterItemClass("CR_ItemTurret", typeof(ItemTurret));
       api.RegisterEntityBehaviorClass("cr_aggressor", typeof(EntityBehaviorAggressor));
+      api.RegisterEntityBehaviorClass("cr_victim", typeof(EntityBehaviorVictim));
       AiTaskRegistry.Register("cr_turret", typeof(AiTaskTurret));
     }
 
