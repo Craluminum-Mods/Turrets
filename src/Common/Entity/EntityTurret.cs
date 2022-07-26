@@ -22,6 +22,19 @@ namespace CRTurrets
       base.Initialize(properties, api, InChunkIndex3d);
 
       turretItem = Properties.Attributes["turretProperties"]["turretItem"].AsString();
+      api.Event.RegisterGameTickListener(UpdateHealthPercent, 500);
+    }
+
+    /// <summary>
+    /// I found nothing better than tick listener. OnHurt() doesn't update on healing
+    /// </summary>
+    private void UpdateHealthPercent(float dt) => UpdateHealthPercent();
+
+    private void UpdateHealthPercent()
+    {
+      var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
+      var maxHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("maxhealth");
+      WatchedAttributes.SetInt("healthPercent", (int)(currentHealth / maxHealth * 100));
     }
 
     public override bool ShouldReceiveDamage(DamageSource damageSource, float damage)
@@ -43,6 +56,7 @@ namespace CRTurrets
       WatchedAttributes.GetTreeAttribute("health").SetFloat("currenthealth", WatchedAttributes.GetFloat("tmpHealth"));
       WatchedAttributes.RemoveAttribute("tmpMaxHealth");
       WatchedAttributes.RemoveAttribute("tmpHealth");
+      UpdateHealthPercent();
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot slot, Vec3d hitPosition, EnumInteractMode mode)
@@ -77,6 +91,7 @@ namespace CRTurrets
         var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
 
         stack.Attributes.SetFloat("health", currentHealth);
+        stack.Attributes.SetInt("healthPercent", WatchedAttributes.GetInt("healthPercent"));
         stack.Attributes.SetString("ownerUid", owneruid);
 
         if (!byEntity.TryGiveItemStack(stack))
@@ -99,10 +114,12 @@ namespace CRTurrets
 
       var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
       var maxHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("maxhealth");
+      var healthPercent = WatchedAttributes.GetInt("healthPercent");
 
       var playerName = World.PlayerByUid(WatchedAttributes.GetString("ownerUid")).PlayerName;
 
       sb.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth.ToString() ?? "-", maxHealth.ToString() ?? "-"));
+      sb.AppendLine(Lang.Get("Health %: {0}", healthPercent.ToString() ?? "-"));
       sb.AppendLine(Lang.Get("Owner: {0}", playerName ?? "-"));
 
       return sb.ToString();

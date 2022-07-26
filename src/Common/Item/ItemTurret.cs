@@ -56,6 +56,8 @@ namespace CRTurrets
       entity.WatchedAttributes.SetFloat("tmpHealth", GetHealth(slot));
       entity.WatchedAttributes.SetFloat("tmpMaxHealth", maxHealth);
 
+      entity.WatchedAttributes.SetInt("healthPercent", GetHealthPercent(slot));
+
       if (!player.Entity.Controls.ShiftKey && player.Entity.Controls.CtrlKey)
       {
         entity.WatchedAttributes.SetBool("crturret-status", true);
@@ -76,6 +78,15 @@ namespace CRTurrets
       if (health == null || health == 0) return maxHealth;
 
       return (float)health;
+    }
+
+    public int GetHealthPercent(ItemSlot slot)
+    {
+      var healthPercent = slot?.Itemstack?.Attributes?.TryGetInt("healthPercent");
+
+      if (healthPercent == null || healthPercent == 0) return 100;
+
+      return (int)healthPercent;
     }
 
     public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot)
@@ -105,6 +116,8 @@ namespace CRTurrets
 
       if (currentHealth != 0)
         dsc.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth, maxHealth));
+
+      dsc.AppendLine(Lang.Get("Health %: {0}", GetHealthPercent(inSlot)));
 
       if (ownerUid != null)
       {
