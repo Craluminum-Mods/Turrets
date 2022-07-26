@@ -15,7 +15,18 @@ namespace CRTurrets
     private bool loaded;
     private readonly int skipRenderJointId = -2;
     private readonly int skipRenderJointId2 = -2;
+    public int DefaultHealthPercent { get; set; }
     public bool DefaultStatusState { get; set; }
+    public bool DefaultHealth10 { get; set; }
+    public bool DefaultHealth20 { get; set; }
+    public bool DefaultHealth30 { get; set; }
+    public bool DefaultHealth40 { get; set; }
+    public bool DefaultHealth50 { get; set; }
+    public bool DefaultHealth60 { get; set; }
+    public bool DefaultHealth70 { get; set; }
+    public bool DefaultHealth80 { get; set; }
+    public bool DefaultHealth90 { get; set; }
+    public bool DefaultHealth100 { get; set; }
 
     public ShapeEntityTurretRenderer(Entity entity, ICoreClientAPI api) : base(entity, api)
     {
@@ -23,8 +34,20 @@ namespace CRTurrets
 
       DoRenderHeldItem = true;
       DefaultStatusState = turret.WatchedAttributes.GetBool("crturret-status");
+      DefaultHealthPercent = turret.WatchedAttributes.GetInt("healthPercent");
 
-      api.Event.RegisterGameTickListener(UpdateTurretInfo, 1000);
+      DefaultHealth10 = DefaultHealthPercent is <= 10 and >= 0;
+      DefaultHealth20 = DefaultHealthPercent is <= 20 and >= 10;
+      DefaultHealth30 = DefaultHealthPercent is <= 30 and >= 20;
+      DefaultHealth40 = DefaultHealthPercent is <= 40 and >= 30;
+      DefaultHealth50 = DefaultHealthPercent is <= 50 and >= 40;
+      DefaultHealth60 = DefaultHealthPercent is <= 60 and >= 50;
+      DefaultHealth70 = DefaultHealthPercent is <= 70 and >= 60;
+      DefaultHealth80 = DefaultHealthPercent is <= 80 and >= 70;
+      DefaultHealth90 = DefaultHealthPercent is <= 90 and >= 80;
+      DefaultHealth100 = DefaultHealthPercent is <= 100 and >= 90;
+
+      api.Event.RegisterGameTickListener(UpdateTurretInfo, 500);
       api.Event.ReloadShapes += MarkShapeModified;
     }
 
@@ -37,11 +60,24 @@ namespace CRTurrets
 
     public void UpdateTurretInfo(float dt)
     {
+      var healthPercent = turret.WatchedAttributes.GetInt("healthPercent");
+
       if (turret.WatchedAttributes.GetBool("crturret-status") != DefaultStatusState)
       {
         MarkShapeModified();
         DefaultStatusState = turret.WatchedAttributes.GetBool("crturret-status");
       }
+
+      if (healthPercent is <= 10 and >= 0) { MarkShapeModified(); DefaultHealth10 = true; }
+      if (healthPercent is <= 20 and >= 10) { MarkShapeModified(); DefaultHealth20 = true; }
+      if (healthPercent is <= 30 and >= 20) { MarkShapeModified(); DefaultHealth30 = true; }
+      if (healthPercent is <= 40 and >= 30) { MarkShapeModified(); DefaultHealth40 = true; }
+      if (healthPercent is <= 50 and >= 40) { MarkShapeModified(); DefaultHealth50 = true; }
+      if (healthPercent is <= 60 and >= 50) { MarkShapeModified(); DefaultHealth60 = true; }
+      if (healthPercent is <= 70 and >= 60) { MarkShapeModified(); DefaultHealth70 = true; }
+      if (healthPercent is <= 80 and >= 70) { MarkShapeModified(); DefaultHealth80 = true; }
+      if (healthPercent is <= 90 and >= 80) { MarkShapeModified(); DefaultHealth90 = true; }
+      if (healthPercent is <= 100 and >= 90) { MarkShapeModified(); DefaultHealth100 = true; }
     }
 
     public override void OnEntityLoaded()
@@ -134,11 +170,24 @@ namespace CRTurrets
 
     private void ApplyTurretTextures(EntityTurret turretIn)
     {
-      IDictionary<string, CompositeTexture> textures = turretIn.Properties.Client.Textures;
+      var textures = turretIn.Properties.Client.Textures;
+      var healthPercent = turret.WatchedAttributes.GetInt("healthPercent");
+
       textures["iron"] = textures["iron"];
       textures["copper"] = textures["copper"];
 
       textures["status"] = !turretIn.WatchedAttributes.GetBool("crturret-status") ? textures["color-red"] : textures["color-green"];
+
+      textures["health10"] = DefaultHealth10 ? textures["color-white"] : textures["color-gray"];
+      textures["health20"] = DefaultHealth20 ? textures["color-white"] : textures["color-gray"];
+      textures["health30"] = DefaultHealth30 ? textures["color-white"] : textures["color-gray"];
+      textures["health40"] = DefaultHealth40 ? textures["color-white"] : textures["color-gray"];
+      textures["health50"] = DefaultHealth50 ? textures["color-white"] : textures["color-gray"];
+      textures["health60"] = DefaultHealth60 ? textures["color-white"] : textures["color-gray"];
+      textures["health70"] = DefaultHealth70 ? textures["color-white"] : textures["color-gray"];
+      textures["health80"] = DefaultHealth80 ? textures["color-white"] : textures["color-gray"];
+      textures["health90"] = DefaultHealth90 ? textures["color-white"] : textures["color-gray"];
+      textures["health100"] = DefaultHealth100 ? textures["color-white"] : textures["color-gray"];
 
       defaultTexSource = GetTextureSource();
     }
