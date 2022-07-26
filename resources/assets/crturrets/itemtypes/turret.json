@@ -18,7 +18,7 @@
   "textures": {
     "color-white": { "base": "game:block/liquid/dye/white" },
     "color-black": { "base": "game:block/liquid/dye/black" },
-    "status": { "base": "game:block/liquid/dye/red" },
+    "status": { "base": "game:block/liquid/dye/gray" },
     "iron": { "base": "game:block/metal/ingot/iron" },
     "copper": { "base": "game:block/metal/ingot/copper" }
   },
