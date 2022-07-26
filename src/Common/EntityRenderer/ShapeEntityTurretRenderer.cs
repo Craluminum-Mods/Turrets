@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -45,7 +44,7 @@ namespace CRTurrets
       DefaultHealth70 = DefaultHealthPercent is <= 70 and >= 60;
       DefaultHealth80 = DefaultHealthPercent is <= 80 and >= 70;
       DefaultHealth90 = DefaultHealthPercent is <= 90 and >= 80;
-      DefaultHealth100 = DefaultHealthPercent is <= 100 and >= 90;
+      DefaultHealth100 = false;
 
       api.Event.RegisterGameTickListener(UpdateTurretInfo, 500);
       api.Event.ReloadShapes += MarkShapeModified;
@@ -62,22 +61,19 @@ namespace CRTurrets
     {
       var healthPercent = turret.WatchedAttributes.GetInt("healthPercent");
 
-      if (turret.WatchedAttributes.GetBool("crturret-status") != DefaultStatusState)
-      {
-        MarkShapeModified();
-        DefaultStatusState = turret.WatchedAttributes.GetBool("crturret-status");
-      }
+      DefaultStatusState = turret.WatchedAttributes.GetBool("crturret-status");
 
-      if (healthPercent is <= 10 and >= 0) { MarkShapeModified(); DefaultHealth10 = true; DefaultHealth20 = true; DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 20 and >= 10) { MarkShapeModified(); DefaultHealth20 = true; DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 30 and >= 20) { MarkShapeModified(); DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 40 and >= 30) { MarkShapeModified(); DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 50 and >= 40) { MarkShapeModified(); DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 60 and >= 50) { MarkShapeModified(); DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 70 and >= 60) { MarkShapeModified(); DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 80 and >= 70) { MarkShapeModified(); DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 90 and >= 80) { MarkShapeModified(); DefaultHealth90 = true; DefaultHealth100 = true; }
-      if (healthPercent is <= 100 and >= 90) { MarkShapeModified(); DefaultHealth100 = true; }
+      if (healthPercent is <= 10 and >= 0) { DefaultHealth10 = true; DefaultHealth20 = true; DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 20 and >= 10) { DefaultHealth20 = true; DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 30 and >= 20) { DefaultHealth30 = true; DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 40 and >= 30) { DefaultHealth40 = true; DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 50 and >= 40) { DefaultHealth50 = true; DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 60 and >= 50) { DefaultHealth60 = true; DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 70 and >= 60) { DefaultHealth70 = true; DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 80 and >= 70) { DefaultHealth80 = true; DefaultHealth90 = true; DefaultHealth100 = true; }
+      if (healthPercent is <= 90 and >= 80) { DefaultHealth90 = true; DefaultHealth100 = true; }
+
+      MarkShapeModified();
     }
 
     public override void OnEntityLoaded()
@@ -88,35 +84,23 @@ namespace CRTurrets
 
     public override void TesselateShape()
     {
-      if (!loaded)
-      {
-        return;
-      }
+      if (!loaded) return;
+
       shapeFresh = true;
       CompositeShape compositeShape = OverrideCompositeShape ?? entity.Properties.Client.Shape;
       Shape entityShape = OverrideEntityShape ?? entity.Properties.Client.LoadedShapeForEntity;
-      if (entityShape == null)
-      {
-        return;
-      }
+
+      if (entityShape == null) return;
+
       OnTesselation?.Invoke(ref entityShape, compositeShape.ToString());
       entity.OnTesselation(ref entityShape, compositeShape.ToString());
       defaultTexSource = GetTextureSource();
 
       ApplyTurretTextures(turret);
-      if (!turret.WatchedAttributes.GetBool("crturret-broken"))
+      if (!turret.WatchedAttributes.GetBool("crturret-broken") && turret.WatchedAttributes.GetBool("crturret-status"))
       {
-        if (turret.WatchedAttributes.GetBool("crturret-status"))
-        {
-          ApplyTurretTextures(turret);
-          if (DefaultHealthPercent != 0) ApplyTurretTextures(turret);
-        }
-        else
-        {
-          ApplyTurretTextures(turret);
-
-          defaultTexSource = GetTextureSource();
-        }
+        ApplyTurretTextures(turret);
+        if (DefaultHealthPercent != 0) ApplyTurretTextures(turret);
       }
       else
       {
@@ -171,7 +155,6 @@ namespace CRTurrets
     private void ApplyTurretTextures(EntityTurret turretIn)
     {
       var textures = turretIn.Properties.Client.Textures;
-      var healthPercent = turret.WatchedAttributes.GetInt("healthPercent");
 
       textures["iron"] = textures["iron"];
       textures["copper"] = textures["copper"];
@@ -198,62 +181,57 @@ namespace CRTurrets
 
     public override void BeforeRender(float dt)
     {
-      if (!shapeFresh)
-      {
-        TesselateShape();
-      }
-      if ((meshRefOpaque != null || meshRefOit != null) && !capi.IsGamePaused)
-      {
-        isSpectator = player?.WorldData.CurrentGameMode == EnumGameMode.Spectator;
-        if (!isSpectator)
-        {
-          ApplyTurretTextures(turret);
-        }
-      }
+      if (!shapeFresh) TesselateShape();
+
+      if ((meshRefOpaque == null && meshRefOit == null) || capi.IsGamePaused) return;
+
+      isSpectator = player?.WorldData.CurrentGameMode == EnumGameMode.Spectator;
+
+      if (isSpectator) return;
+
+      ApplyTurretTextures(turret);
     }
 
     public override void DoRender3DOpaqueBatched(float dt, bool isShadowPass)
     {
-      if (!isSpectator && (meshRefOpaque != null || meshRefOit != null))
+      if (isSpectator || (meshRefOpaque == null && meshRefOit == null)) return;
+
+      if (isShadowPass)
       {
-        if (isShadowPass)
-        {
-          Mat4f.Mul(tmpMvMat, capi.Render.CurrentModelviewMatrix, ModelMat);
-          capi.Render.CurrentActiveShader.UniformMatrix("modelViewMatrix", tmpMvMat);
-        }
-        else
-        {
-          frostAlpha += (targetFrostAlpha - frostAlpha) * dt / 10f;
-          capi.Render.CurrentActiveShader.Uniform("extraGlow", entity.Properties.Client.GlowLevel);
-          capi.Render.CurrentActiveShader.UniformMatrix("modelMatrix", ModelMat);
-          capi.Render.CurrentActiveShader.UniformMatrix("viewMatrix", capi.Render.CurrentModelviewMatrix);
-          capi.Render.CurrentActiveShader.Uniform("addRenderFlags", AddRenderFlags);
-          capi.Render.CurrentActiveShader.Uniform("windWaveIntensity", (float)WindWaveIntensity);
-          capi.Render.CurrentActiveShader.Uniform("skipRenderJointId", skipRenderJointId);
-          capi.Render.CurrentActiveShader.Uniform("skipRenderJointId2", skipRenderJointId2);
-          capi.Render.CurrentActiveShader.Uniform("entityId", (int)entity.EntityId);
-          capi.Render.CurrentActiveShader.Uniform("glitchFlicker", glitchFlicker ? 1 : 0);
-          capi.Render.CurrentActiveShader.Uniform("frostAlpha", GameMath.Clamp(frostAlpha, 0f, 1f));
-          capi.Render.CurrentActiveShader.Uniform("waterWaveCounter", capi.Render.ShaderUniforms.WaterWaveCounter);
-          color[0] = ((entity.RenderColor >> 16) & 0xFF) / 255f;
-          color[1] = ((entity.RenderColor >> 8) & 0xFF) / 255f;
-          color[2] = (entity.RenderColor & 0xFF) / 255f;
-          color[3] = ((entity.RenderColor >> 24) & 0xFF) / 255f;
-          capi.Render.CurrentActiveShader.Uniform("renderColor", color);
-          double num = Math.Min(entity.WatchedAttributes.GetDouble("temporalStability", 1.0), capi.World.Player.Entity.WatchedAttributes.GetDouble("temporalStability", 1.0));
-          double num2 = glitchAffected ? Math.Max(0.0, 1.0 - (2.5 * num)) : 0.0;
-          capi.Render.CurrentActiveShader.Uniform("glitchEffectStrength", (float)num2);
-        }
-        capi.Render.CurrentActiveShader.UniformMatrices("elementTransforms", 35, entity.AnimManager.Animator.Matrices);
-        if (meshRefOpaque != null)
-        {
-          capi.Render.RenderMesh(meshRefOpaque);
-        }
-        if (meshRefOit != null)
-        {
-          capi.Render.RenderMesh(meshRefOit);
-        }
+        Mat4f.Mul(tmpMvMat, capi.Render.CurrentModelviewMatrix, ModelMat);
+        capi.Render.CurrentActiveShader.UniformMatrix("modelViewMatrix", tmpMvMat);
       }
+      else
+      {
+        frostAlpha += (targetFrostAlpha - frostAlpha) * dt / 10f;
+        capi.Render.CurrentActiveShader.Uniform("extraGlow", entity.Properties.Client.GlowLevel);
+        capi.Render.CurrentActiveShader.UniformMatrix("modelMatrix", ModelMat);
+        capi.Render.CurrentActiveShader.UniformMatrix("viewMatrix", capi.Render.CurrentModelviewMatrix);
+        capi.Render.CurrentActiveShader.Uniform("addRenderFlags", AddRenderFlags);
+        capi.Render.CurrentActiveShader.Uniform("windWaveIntensity", (float)WindWaveIntensity);
+        capi.Render.CurrentActiveShader.Uniform("skipRenderJointId", skipRenderJointId);
+        capi.Render.CurrentActiveShader.Uniform("skipRenderJointId2", skipRenderJointId2);
+        capi.Render.CurrentActiveShader.Uniform("entityId", (int)entity.EntityId);
+        capi.Render.CurrentActiveShader.Uniform("glitchFlicker", glitchFlicker ? 1 : 0);
+        capi.Render.CurrentActiveShader.Uniform("frostAlpha", GameMath.Clamp(frostAlpha, 0f, 1f));
+        capi.Render.CurrentActiveShader.Uniform("waterWaveCounter", capi.Render.ShaderUniforms.WaterWaveCounter);
+        color[0] = ((entity.RenderColor >> 16) & 0xFF) / 255f;
+        color[1] = ((entity.RenderColor >> 8) & 0xFF) / 255f;
+        color[2] = (entity.RenderColor & 0xFF) / 255f;
+        color[3] = ((entity.RenderColor >> 24) & 0xFF) / 255f;
+        capi.Render.CurrentActiveShader.Uniform("renderColor", color);
+        double num = Math.Min(entity.WatchedAttributes.GetDouble("temporalStability", 1.0), capi.World.Player.Entity.WatchedAttributes.GetDouble("temporalStability", 1.0));
+        double num2 = glitchAffected ? Math.Max(0.0, 1.0 - (2.5 * num)) : 0.0;
+        capi.Render.CurrentActiveShader.Uniform("glitchEffectStrength", (float)num2);
+      }
+
+      capi.Render.CurrentActiveShader.UniformMatrices("elementTransforms", 35, entity.AnimManager.Animator.Matrices);
+
+      if (meshRefOpaque != null) capi.Render.RenderMesh(meshRefOpaque);
+
+      if (meshRefOit == null) return;
+
+      capi.Render.RenderMesh(meshRefOit);
     }
   }
 }
