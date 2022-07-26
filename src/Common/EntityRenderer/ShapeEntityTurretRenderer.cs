@@ -67,32 +67,25 @@ namespace CRTurrets
       entity.OnTesselation(ref entityShape, compositeShape.ToString());
       defaultTexSource = GetTextureSource();
 
-      ApplyTurretPanelTextures(turret);
+      ApplyTurretTextures(turret);
       if (!turret.WatchedAttributes.GetBool("crturret-broken"))
       {
         if (turret.WatchedAttributes.GetBool("crturret-status"))
         {
-          ApplyTurretPanelTextures(turret);
+          ApplyTurretTextures(turret);
+          if (DefaultHealthPercent != 0) ApplyTurretTextures(turret);
         }
         else
         {
-          IDictionary<string, CompositeTexture> textures = entity.Properties.Client.Textures;
-          textures["color-black"] = textures["color-black"];
-          textures["color-white"] = textures["color-white"];
-          textures["iron"] = textures["iron"];
-          textures["copper"] = textures["copper"];
-          textures["status"] = textures["color-red"];
+          ApplyTurretTextures(turret);
+
           defaultTexSource = GetTextureSource();
         }
       }
       else
       {
-        IDictionary<string, CompositeTexture> textures2 = entity.Properties.Client.Textures;
-        textures2["color-black"] = textures2["color-black"];
-        textures2["color-white"] = textures2["color-white"];
-        textures2["iron"] = textures2["iron"];
-        textures2["copper"] = textures2["copper"];
-        textures2["status"] = textures2["color-red"];
+        ApplyTurretTextures(turret);
+
         defaultTexSource = GetTextureSource();
       }
       TyronThreadPool.QueueTask(delegate
@@ -139,6 +132,17 @@ namespace CRTurrets
       });
     }
 
+    private void ApplyTurretTextures(EntityTurret turretIn)
+    {
+      IDictionary<string, CompositeTexture> textures = turretIn.Properties.Client.Textures;
+      textures["iron"] = textures["iron"];
+      textures["copper"] = textures["copper"];
+
+      textures["status"] = !turretIn.WatchedAttributes.GetBool("crturret-status") ? textures["color-red"] : textures["color-green"];
+
+      defaultTexSource = GetTextureSource();
+    }
+
     protected void TurretTextureModified() => MarkShapeModified();
 
     public override void reloadSkin() { }
@@ -154,7 +158,7 @@ namespace CRTurrets
         isSpectator = player?.WorldData.CurrentGameMode == EnumGameMode.Spectator;
         if (!isSpectator)
         {
-          ApplyTurretPanelTextures(turret);
+          ApplyTurretTextures(turret);
         }
       }
     }
@@ -201,27 +205,6 @@ namespace CRTurrets
           capi.Render.RenderMesh(meshRefOit);
         }
       }
-    }
-
-    private void ApplyTurretPanelTextures(EntityTurret turretIn)
-    {
-      IDictionary<string, CompositeTexture> textures = entity.Properties.Client.Textures;
-      RunStatusTextureInfo(turretIn, textures);
-      RunDisplayTextureSetup(textures);
-      defaultTexSource = GetTextureSource();
-    }
-
-    private void RunDisplayTextureSetup(IDictionary<string, CompositeTexture> newTexturesIn)
-    {
-      newTexturesIn["color-black"] = newTexturesIn["color-black"];
-      newTexturesIn["color-white"] = newTexturesIn["color-white"];
-      newTexturesIn["iron"] = newTexturesIn["iron"];
-      newTexturesIn["copper"] = newTexturesIn["copper"];
-    }
-
-    public void RunStatusTextureInfo(EntityTurret turretIn, IDictionary<string, CompositeTexture> newTexturesIn)
-    {
-      newTexturesIn["status"] = !turretIn.WatchedAttributes.GetBool("crturret-status") ? newTexturesIn["color-red"] : newTexturesIn["color-green"];
     }
   }
 }
