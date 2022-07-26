@@ -219,7 +219,7 @@ namespace CRTurrets
       newTexturesIn["copper"] = newTexturesIn["copper"];
     }
 
-    public static void RunScreenlockTextureInfo(EntityTurret turretIn, IDictionary<string, CompositeTexture> newTexturesIn)
+    public void RunStatusTextureInfo(EntityTurret turretIn, IDictionary<string, CompositeTexture> newTexturesIn)
     {
       newTexturesIn["status"] = !turretIn.WatchedAttributes.GetBool("crturret-status") ? newTexturesIn["color-red"] : newTexturesIn["color-green"];
     }
