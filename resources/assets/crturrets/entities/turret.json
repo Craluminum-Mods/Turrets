@@ -22,8 +22,7 @@
       "iron": { "base": "game:block/metal/ingot/iron" },
       "copper": { "base": "game:block/metal/ingot/copper" }
     },
-    // "renderer": "CRShapeEntityTurretRenderer",
-    "renderer": "Shape",
+    "renderer": "CRShapeEntityTurretRenderer",
     "shape": { "base": "entity/land/turret" },
     "behaviors": [{ "code": "repulseagents" }, { "code": "controlledphysics", "stepHeight": 1.1251 }, { "code": "interpolateposition" }],
     "animations": [

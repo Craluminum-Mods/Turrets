@@ -24,7 +24,7 @@ namespace CRTurrets
     public override void StartClientSide(ICoreClientAPI api)
     {
       base.StartClientSide(api);
-      // api.RegisterEntityRendererClass("CRShapeEntityTurretRenderer", typeof(ShapeEntityTurretRenderer));
+      api.RegisterEntityRendererClass("CRShapeEntityTurretRenderer", typeof(ShapeEntityTurretRenderer));
     }
   }
 }

@@ -103,15 +103,6 @@ namespace CRTurrets
 
       var playerName = World.PlayerByUid(WatchedAttributes.GetString("ownerUid")).PlayerName;
 
-      var status = WatchedAttributes.GetBool("crturret-status");
-      var color = status ? "#84ff84" : "#ff8484";
-      var onoff = Lang.Get(status ? "On" : "Off");
-
-      sb.Append("<font size=\"24\" weight=\"bold\" color=\"")
-      .Append(color)
-      .Append("\">")
-      .Append(onoff)
-      .AppendLine("</font>");
       sb.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth.ToString() ?? "-", maxHealth.ToString() ?? "-"));
       sb.AppendLine(Lang.Get("Owner: {0}", playerName ?? "-"));
 
