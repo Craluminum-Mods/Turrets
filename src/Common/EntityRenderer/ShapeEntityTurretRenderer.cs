@@ -206,7 +206,7 @@ namespace CRTurrets
     private void ApplyTurretPanelTextures(EntityTurret turretIn)
     {
       IDictionary<string, CompositeTexture> textures = entity.Properties.Client.Textures;
-      RunScreenlockTextureInfo(turretIn, textures);
+      RunStatusTextureInfo(turretIn, textures);
       RunDisplayTextureSetup(textures);
       defaultTexSource = GetTextureSource();
     }
