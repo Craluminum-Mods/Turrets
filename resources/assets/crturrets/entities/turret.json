@@ -13,6 +13,16 @@
   },
   "client": {
     "textures": {
+      "health10": { "base": "game:block/liquid/dye/white" },
+      "health20": { "base": "game:block/liquid/dye/white" },
+      "health30": { "base": "game:block/liquid/dye/white" },
+      "health40": { "base": "game:block/liquid/dye/white" },
+      "health50": { "base": "game:block/liquid/dye/white" },
+      "health60": { "base": "game:block/liquid/dye/white" },
+      "health70": { "base": "game:block/liquid/dye/white" },
+      "health80": { "base": "game:block/liquid/dye/white" },
+      "health90": { "base": "game:block/liquid/dye/white" },
+      "health100": { "base": "game:block/liquid/dye/white" },
       "color-white": { "base": "game:block/liquid/dye/white" },
       "color-black": { "base": "game:block/liquid/dye/black" },
       "color-gray": { "base": "game:block/liquid/dye/gray" },

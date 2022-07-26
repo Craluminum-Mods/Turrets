@@ -16,6 +16,16 @@
     "base": "entity/land/turret"
   },
   "textures": {
+    "health10": { "base": "game:block/liquid/dye/gray" },
+    "health20": { "base": "game:block/liquid/dye/gray" },
+    "health30": { "base": "game:block/liquid/dye/gray" },
+    "health40": { "base": "game:block/liquid/dye/gray" },
+    "health50": { "base": "game:block/liquid/dye/gray" },
+    "health60": { "base": "game:block/liquid/dye/gray" },
+    "health70": { "base": "game:block/liquid/dye/gray" },
+    "health80": { "base": "game:block/liquid/dye/gray" },
+    "health90": { "base": "game:block/liquid/dye/gray" },
+    "health100": { "base": "game:block/liquid/dye/gray" },
     "color-white": { "base": "game:block/liquid/dye/white" },
     "color-black": { "base": "game:block/liquid/dye/black" },
     "status": { "base": "game:block/liquid/dye/gray" },
