@@ -8,10 +8,6 @@
       "turretEntity": "crturrets:turret"
     }
   },
-  "canClimb": true,
-  "canClimbAnywhere": true,
-  "climbTouchDistance": 0.1,
-  "rotateModelOnClimb": true,
   "shape": {
     "base": "entity/land/turret"
   },
