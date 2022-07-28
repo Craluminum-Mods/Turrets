@@ -13,6 +13,7 @@ namespace CRTurrets
   public class EntityTurret : EntityHumanoid
   {
     string turretItem;
+    protected InventoryGeneric inv;
 
     // string[] blacklistEntityIds;
     // string[] blacklistPlayerIds;
@@ -22,7 +23,32 @@ namespace CRTurrets
       base.Initialize(properties, api, InChunkIndex3d);
 
       turretItem = Properties.Attributes["turretProperties"]["turretItem"].AsString();
+      allowedAmmo = Properties.Attributes["turretProperties"]["acceptAmmoClass"].AsString();
       api.Event.RegisterGameTickListener(UpdateHealthPercent, 500);
+
+      inv = new InventoryGeneric(properties.Attributes["turretProperties"]["quantitySlots"].AsInt(4), "turretContents-" + EntityId, Api);
+      if (WatchedAttributes["turretInv"] is TreeAttribute tree) inv.FromTreeAttributes(tree);
+      inv.PutLocked = false;
+
+      if (World.Side == EnumAppSide.Server) inv.SlotModified += Inv_SlotModified;
+
+      if (World.Side == EnumAppSide.Client) WatchedAttributes.RegisterModifiedListener("turretInv", OnInventoryModified);
+    }
+
+    private void OnInventoryModified()
+    {
+      if (WatchedAttributes["turretInv"] is TreeAttribute tree)
+      {
+        inv.FromTreeAttributes(tree);
+      }
+    }
+
+    private void Inv_SlotModified(int slotid)
+    {
+      var tree = new TreeAttribute();
+      inv.ToTreeAttributes(tree);
+      WatchedAttributes["turretInv"] = tree;
+      WatchedAttributes.MarkPathDirty("turretInv");
     }
 
     /// <summary>
@@ -82,7 +108,14 @@ namespace CRTurrets
         var status = WatchedAttributes.GetBool("crturret-status");
         WatchedAttributes.SetBool("crturret-status", !status);
 
-        return;
+      if (shiftKey && !ctrlKey && slot.Itemstack != null)
+      {
+        TryPutAmmo(slot); return;
+      }
+
+      if (!shiftKey && !ctrlKey && rightSlotEmpty)
+      {
+        TryTakeAmmo(slot); return;
       }
 
       if (shiftKey && !ctrlKey && rightSlotEmpty)
@@ -101,6 +134,18 @@ namespace CRTurrets
 
         Die();
         return;
+    }
+
+    private void TryPutAmmo(ItemSlot slot)
+    {
+      if (slot.Itemstack == null) return;
+      if (slot.Itemstack.Collectible.Class != allowedAmmo) return;
+      slot.TryPutInto(World, inv[0], 1);
+    }
+
+    private void TryTakeAmmo(ItemSlot slot)
+    {
+      inv[0].TryPutInto(World, slot, 1);
       }
 
       base.OnInteract(byEntity, slot, hitPosition, mode);
@@ -116,13 +161,27 @@ namespace CRTurrets
       var maxHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("maxhealth");
       var healthPercent = WatchedAttributes.GetInt("healthPercent");
 
-      var playerName = World.PlayerByUid(WatchedAttributes.GetString("ownerUid")).PlayerName;
+    }
 
-      sb.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth.ToString() ?? "-", maxHealth.ToString() ?? "-"));
-      sb.AppendLine(Lang.Get("Health %: {0}", healthPercent.ToString() ?? "-"));
-      sb.AppendLine(Lang.Get("Owner: {0}", playerName ?? "-"));
+    private void GetInventorySlotsDescription(StringBuilder sb)
+    {
+      sb.AppendLine(Lang.Get("Storage Slots: {0}", inv.Count));
 
-      return sb.ToString();
+      foreach (var slot in inv)
+      {
+        if (slot == null) continue;
+
+        var slotid = inv.GetSlotId(slot);
+
+        if (slot.Empty) sb.AppendLine(Lang.Get("Slot {0}: Empty", slotid));
+
+        if (slot.Itemstack == null) continue;
+
+        var name = slot.Itemstack.GetName();
+        var quantity = slot.Itemstack.StackSize;
+
+        sb.AppendLine(Lang.Get($"Slot {slotid}: {quantity}x {name}"));
+      }
     }
 
     public override double GetWalkSpeedMultiplier(double groundDragFactor = 0.3) => 0;
@@ -131,17 +190,6 @@ namespace CRTurrets
     {
       var interactions = ObjectCacheUtil.GetOrCreate(world.Api, "turretInteractions" + EntityId, () =>
         {
-          var arrowStacklist = new List<ItemStack>();
-          var stoneStacklist = new List<ItemStack>();
-
-          foreach (var collobj in world.Collectibles)
-          {
-            if (collobj.Code == null) continue;
-
-            if (collobj is ItemArrow) arrowStacklist.Add(new ItemStack(collobj));
-            if (collobj is ItemStone) stoneStacklist.Add(new ItemStack(collobj));
-          }
-
           return new WorldInteraction[] {
             new WorldInteraction()
             {
@@ -151,17 +199,10 @@ namespace CRTurrets
             },
             new WorldInteraction()
             {
-              ActionLangCode = Code.Domain + ":entityhelp-addammo-arrow",
+              ActionLangCode = Code.Domain + ":entityhelp-addammo",
               MouseButton = EnumMouseButton.Right,
               HotKeyCode = "shift",
-              Itemstacks = arrowStacklist.ToArray()
-            },
-            new WorldInteraction()
-            {
-              ActionLangCode = Code.Domain + ":entityhelp-addammo-stone",
-              MouseButton = EnumMouseButton.Right,
-              HotKeyCode = "shift",
-              Itemstacks = stoneStacklist.ToArray()
+              Itemstacks = null
             }
           };
         });
