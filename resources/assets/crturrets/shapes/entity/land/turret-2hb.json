@@ -325,20 +325,6 @@
 								"up": { "texture": "#healthbarbottom", "uv": [ 1.0, 8.0, 6.0, 13.0 ] },
 								"down": { "texture": "#healthbarbottom", "uv": [ 6.5, 1.0, 11.5, 6.0 ] }
 							}
-						},
-						{
-							"name": "ammo",
-							"from": [ -0.6, 2.5, 0.0 ], 
-							"to": [ -0.5, 6.5, 4.0 ], 
-							"rotationOrigin": [ -0.6, 4.5, 2.0 ],
-							"faces": {
-								"north": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
-								"east": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 4.0, 4.0 ] },
-								"south": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
-								"west": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 4.0, 4.0 ] },
-								"up": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
-								"down": { "texture": "#healthbarbottom", "uv": [ 0.0, 0.0, 0.5, 4.0 ] }
-							}
 						}
 					]
 				}
