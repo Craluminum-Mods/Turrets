@@ -9,20 +9,12 @@
     }
   },
   "shape": {
-    "base": "entity/land/turret"
+    "base": "entity/land/turret-2hb"
   },
   "textures": {
-    "health10": { "base": "game:block/liquid/dye/gray" },
-    "health20": { "base": "game:block/liquid/dye/gray" },
-    "health30": { "base": "game:block/liquid/dye/gray" },
-    "health40": { "base": "game:block/liquid/dye/gray" },
-    "health50": { "base": "game:block/liquid/dye/gray" },
-    "health60": { "base": "game:block/liquid/dye/gray" },
-    "health70": { "base": "game:block/liquid/dye/gray" },
-    "health80": { "base": "game:block/liquid/dye/gray" },
-    "health90": { "base": "game:block/liquid/dye/gray" },
-    "health100": { "base": "game:block/liquid/dye/gray" },
-    "status": { "base": "game:block/liquid/dye/gray" },
+    "healthbarbottom": { "base": "game:block/liquid/dye/white" },
+    "healthbartop": { "base": "game:block/liquid/dye/white" },
+    "status": { "base": "game:block/liquid/dye/red" },
     "iron": { "base": "game:block/metal/ingot/iron" },
     "copper": { "base": "game:block/metal/ingot/copper" }
   },
