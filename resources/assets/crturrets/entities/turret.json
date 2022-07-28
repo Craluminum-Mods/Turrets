@@ -8,7 +8,7 @@
   "attributes": {
     "spawnDamageParticles": true,
     "turretProperties": {
-      "turretItem": "crturrets:turret-stone",
+      "turretItem": "crturrets:turret",
       "quantitySlots": 1,
       "acceptAmmoClass": "ItemStone"
     }
@@ -36,7 +36,7 @@
     "animations": [
       {
         "code": "hurt",
-        "animation": "bounce",
+        "animation": "hurt",
         "animationSpeed": 3
       },
       {
@@ -80,7 +80,7 @@
             "maxDist": 17,
             "seekingRange": 30,
             "animationSpeed": 1.5,
-            "animation": "bounce"
+            "animation": "hurt"
           }
         ]
       }
