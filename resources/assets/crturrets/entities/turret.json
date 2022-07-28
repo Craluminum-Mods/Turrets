@@ -8,8 +8,7 @@
   "attributes": {
     "spawnDamageParticles": true,
     "turretProperties": {
-      "turretItem": "crturrets:turret",
-      "quantitySlots": 1
+      "acceptAmmoClass": "ItemStone"
     }
   },
   "client": {

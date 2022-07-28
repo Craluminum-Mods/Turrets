@@ -13,6 +13,7 @@ namespace CRTurrets
   public class EntityTurret : EntityHumanoid
   {
     string turretItem;
+    string allowedAmmo;
     protected InventoryGeneric inv;
 
     // string[] blacklistEntityIds;
