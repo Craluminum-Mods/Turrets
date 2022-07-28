@@ -125,31 +125,34 @@ namespace Vintagestory.GameContent
       {
         didThrow = true;
 
-        EntityProperties type = entity.World.GetEntityType(new AssetLocation("thrownstone-granite"));
-        Entity entitypr = entity.World.ClassRegistry.CreateEntity(type);
-        ((EntityThrownStone)entitypr).FiredBy = entity;
-        ((EntityThrownStone)entitypr).Damage = 1;
-        ((EntityThrownStone)entitypr).ProjectileStack = new ItemStack(entity.World.GetItem(new AssetLocation("stone-granite")));
-        ((EntityThrownStone)entitypr).NonCollectible = false;
-
-        Vec3d pos = entity.ServerPos.XYZ.Add(0, entity.LocalEyePos.Y, 0);
-        Vec3d aheadPos = targetEntity.ServerPos.XYZ.Add(0, targetEntity.LocalEyePos.Y, 0);
-
-        double distf = Math.Pow(pos.SquareDistanceTo(aheadPos), 0.1);
-        Vec3d velocity = (aheadPos - pos).Normalize() * GameMath.Clamp(distf - 1f, 0.1f, 1f);
-
-        entitypr.ServerPos.SetPos(
-            entity.ServerPos.BehindCopy(0.21).XYZ.Add(0, entity.LocalEyePos.Y, 0)
-        );
-
-        entitypr.ServerPos.Motion.Set(velocity);
-
-        entitypr.Pos.SetFrom(entitypr.ServerPos);
-        entitypr.World = entity.World;
-        entity.World.SpawnEntity(entitypr);
+        entity.World.SpawnEntity(GetStone());
       }
 
       return accum < durationMs / 1000f;
+    }
+
+    private Entity GetStone()
+    {
+      EntityProperties type = entity.World.GetEntityType(new AssetLocation("thrownstone-granite"));
+      Entity entitypr = entity.World.ClassRegistry.CreateEntity(type);
+      ((EntityThrownStone)entitypr).FiredBy = entity;
+      ((EntityThrownStone)entitypr).Damage = 1;
+      ((EntityThrownStone)entitypr).ProjectileStack = new ItemStack(entity.World.GetItem(new AssetLocation("stone-granite")));
+      ((EntityThrownStone)entitypr).NonCollectible = false;
+
+      Vec3d pos = entity.ServerPos.XYZ.Add(0, entity.LocalEyePos.Y, 0);
+      Vec3d aheadPos = targetEntity.ServerPos.XYZ.Add(0, targetEntity.LocalEyePos.Y, 0);
+
+      double distf = Math.Pow(pos.SquareDistanceTo(aheadPos), 0.1);
+      Vec3d velocity = (aheadPos - pos).Normalize() * GameMath.Clamp(distf - 1f, 0.1f, 1f);
+
+      entitypr.ServerPos.SetPos(entity.ServerPos.BehindCopy(0.21).XYZ.Add(0, entity.LocalEyePos.Y, 0));
+
+      entitypr.ServerPos.Motion.Set(velocity);
+
+      entitypr.Pos.SetFrom(entitypr.ServerPos);
+      entitypr.World = entity.World;
+      return entitypr;
     }
   }
 }

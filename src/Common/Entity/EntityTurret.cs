@@ -25,7 +25,7 @@ namespace CRTurrets
 
       turretItem = Properties.Attributes["turretProperties"]["turretItem"].AsString();
       allowedAmmo = Properties.Attributes["turretProperties"]["acceptAmmoClass"].AsString();
-      api.Event.RegisterGameTickListener(UpdateHealthPercent, 500);
+      api.Event.RegisterGameTickListener(UpdateTurretInfo, 500);
 
       inv = new InventoryGeneric(properties.Attributes["turretProperties"]["quantitySlots"].AsInt(4), "turretContents-" + EntityId, Api);
       if (WatchedAttributes["turretInv"] is TreeAttribute tree) inv.FromTreeAttributes(tree);
@@ -55,7 +55,7 @@ namespace CRTurrets
     /// <summary>
     /// I found nothing better than tick listener. OnHurt() doesn't update on healing
     /// </summary>
-    private void UpdateHealthPercent(float dt) => UpdateHealthPercent();
+    private void UpdateTurretInfo(float dt) => UpdateHealthPercent();
 
     private void UpdateHealthPercent()
     {
@@ -106,8 +106,8 @@ namespace CRTurrets
 
       if (!shiftKey && ctrlKey && rightSlotEmpty)
       {
-        var status = WatchedAttributes.GetBool("crturret-status");
-        WatchedAttributes.SetBool("crturret-status", !status);
+        GetNewStatus(); return;
+      }
 
       if (shiftKey && !ctrlKey && slot.Itemstack != null)
       {
@@ -121,20 +121,27 @@ namespace CRTurrets
 
       if (shiftKey && !ctrlKey && rightSlotEmpty)
       {
-        var stack = new ItemStack(byEntity.World.GetItem(new AssetLocation(turretItem)));
-        var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
+        TryPickup(byEntity, owneruid); return;
+      }
 
-        stack.Attributes.SetFloat("health", currentHealth);
-        stack.Attributes.SetInt("healthPercent", WatchedAttributes.GetInt("healthPercent"));
-        stack.Attributes.SetString("ownerUid", owneruid);
+      base.OnInteract(byEntity, slot, hitPosition, mode);
+    }
 
-        if (!byEntity.TryGiveItemStack(stack))
-        {
-          byEntity.World.SpawnItemEntity(stack, ServerPos.XYZ);
-        }
+    private void TryPickup(EntityAgent byEntity, string owneruid)
+    {
+      var stack = new ItemStack(byEntity.World.GetItem(new AssetLocation(turretItem)));
+      var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
 
-        Die();
-        return;
+      stack.Attributes.SetFloat("health", currentHealth);
+      stack.Attributes.SetInt("healthPercent", WatchedAttributes.GetInt("healthPercent"));
+      stack.Attributes.SetString("ownerUid", owneruid);
+
+      if (!byEntity.TryGiveItemStack(stack))
+      {
+        byEntity.World.SpawnItemEntity(stack, ServerPos.XYZ);
+      }
+
+      Die();
     }
 
     private void TryPutAmmo(ItemSlot slot)
@@ -147,21 +154,32 @@ namespace CRTurrets
     private void TryTakeAmmo(ItemSlot slot)
     {
       inv[0].TryPutInto(World, slot, 1);
-      }
-
-      base.OnInteract(byEntity, slot, hitPosition, mode);
     }
+
+    private void GetNewStatus() => WatchedAttributes.SetBool("crturret-status", !WatchedAttributes.GetBool("crturret-status"));
 
     public override string GetInfoText()
     {
       base.GetInfoText();
 
       var sb = new StringBuilder();
+      var playerName = World.PlayerByUid(WatchedAttributes.GetString("ownerUid")).PlayerName;
 
+      sb.AppendLine(Lang.Get("Owner: {0}", playerName ?? "-"));
+      GetHealthDescription(sb);
+      GetInventorySlotsDescription(sb);
+
+      return sb.ToString();
+    }
+
+    private void GetHealthDescription(StringBuilder sb)
+    {
       var currentHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("currenthealth");
       var maxHealth = WatchedAttributes.GetTreeAttribute("health").GetFloat("maxhealth");
       var healthPercent = WatchedAttributes.GetInt("healthPercent");
 
+      sb.AppendLine(Lang.Get("Health: {0}/{1}", currentHealth, maxHealth));
+      sb.AppendLine(Lang.Get("Health %: {0}", healthPercent));
     }
 
     private void GetInventorySlotsDescription(StringBuilder sb)
